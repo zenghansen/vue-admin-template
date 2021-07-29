@@ -5,6 +5,7 @@
 </template>
 <script>
   import * as echarts from 'echarts';
+  import {getList} from "../../api/test";
   export default {
     data() {
       return {
@@ -20,7 +21,10 @@
     },
     methods: {
       fetchData(){
-
+        var params = {uid:1,pageSize:10,pageNumber:1}
+        getList(params).then(response => {
+          console.log(response)
+        })
 
       },
 
