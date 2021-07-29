@@ -30,10 +30,11 @@
 
       init() {
 
+
         var app = {};
 
         var chartDom = document.getElementById('main');
-        var myChart = echarts.init(chartDom, 'dark');
+        var myChart = echarts.init(chartDom);
         var option;
 
         var posList = [
@@ -128,7 +129,7 @@
             }
           },
           legend: {
-            data: this.legendData
+            data: ['Forest', 'Steppe', 'Desert', 'Wetland']
           },
           toolbox: {
             show: true,
@@ -147,7 +148,7 @@
             {
               type: 'category',
               axisTick: {show: false},
-              data: this.xAxisData
+              data: ['2012', '2013', '2014', '2015', '2016']
             }
           ],
           yAxis: [
@@ -163,6 +164,12 @@
               label: labelOption,
               emphasis: {
                 focus: 'series'
+              },
+              markPoint: {
+                data: [
+                  {name: '年最高', value: 13.2, xAxis: 3, yAxis: 184},
+                  {name: '年最低', value: 2.3, xAxis: 11, yAxis: 3}
+                ]
               },
               data: [320, 332, 301, 334, 390]
             },
@@ -197,6 +204,7 @@
         };
 
         option && myChart.setOption(option);
+
       }
     }
   }
