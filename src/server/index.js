@@ -1,5 +1,6 @@
 // node 后端服务器
 const buyStatusApi = require('./api/buyStatusApi');
+const priceTrendApi = require('./api/priceTrendApi');
 const fs = require('fs');
 const path = require('path');
 const bodyParser = require('body-parser');
@@ -26,6 +27,7 @@ app.use(bodyParser.urlencoded({extended: false}));
 
 // 后端api路由
 app.use('/api/buy_status', buyStatusApi);
+app.use('/api/price_trend', priceTrendApi);
 
 
 

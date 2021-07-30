@@ -1,40 +1,45 @@
 <template>
-  <div class="app-container">
-    <div id="main" :style="{width: '100%', height: '800px'}"></div>
-  </div>
+  <div id="main" :style="{width: '100%', height: '600px'}"></div>
 </template>
 <script>
   import * as echarts from 'echarts';
-  import {getList} from "../../api/test";
+  import request from '@/utils/request'
+  import {serverDomain} from "../../settings";
+
   export default {
     data() {
       return {
-        legendData: ['Forest', 'Steppe', 'Desert', 'Wetland'],
-        xAxisData:['2012', '2013', '2014', '2015', '2016']
+        chartData: {},
+        chart: null
       }
     },
     mounted() {
-      this.init()
+      this.initCharts()
     },
     created() {
       this.fetchData()
     },
+    watch: {
+      chartData: {
+        deep: true,
+        handler(val) {
+          this.setOptions(val)
+        }
+      }
+    },
     methods: {
-      fetchData(){
-        var params = {uid:1,pageSize:10,pageNumber:1}
-        getList(params).then(response => {
-          console.log(response)
-        })
-
+      initCharts() {
+        this.chart = echarts.init(this.$el, 'macarons')
       },
+      setOptions(chartData) {
 
-      init() {
+        var xAxisData = chartData.xAxisData
+        var price1Data = chartData.price1Data
+        var price2Data = chartData.price2Data
+        var price3Data = chartData.price3Data
+        var price4Data = chartData.price4Data
+        var price = chartData.price
 
-
-        var app = {};
-
-        var chartDom = document.getElementById('main');
-        var myChart = echarts.init(chartDom);
         var option;
 
         var posList = [
@@ -76,7 +81,7 @@
         };
 
         app.config = {
-          rotate: 90,
+          rotate: 0,
           align: 'left',
           verticalAlign: 'middle',
           position: 'insideBottom',
@@ -91,7 +96,7 @@
                 distance: app.config.distance
               }
             };
-            myChart.setOption({
+            this.chart.setOption({
               series: [{
                 label: labelOption
               }, {
@@ -111,17 +116,20 @@
           position: app.config.position,
           distance: app.config.distance,
           align: app.config.align,
+          padding: [0, 0, 0, -7],
           verticalAlign: app.config.verticalAlign,
           rotate: app.config.rotate,
-          formatter: '{c}  {name|{a}}',
-          fontSize: 16,
+          formatter: '{c}',
+          fontSize: 10,
           rich: {
-            name: {
-            }
+            name: {}
           }
         };
 
         option = {
+          title: {
+            text: 'Colorless price trend',
+          },
           tooltip: {
             trigger: 'axis',
             axisPointer: {
@@ -129,7 +137,7 @@
             }
           },
           legend: {
-            data: ['Forest', 'Steppe', 'Desert', 'Wetland']
+            data: ['price1', 'price2', 'price3', 'price4']
           },
           toolbox: {
             show: true,
@@ -144,68 +152,84 @@
               saveAsImage: {show: true}
             }
           },
-          xAxis: [
+          yAxis: [
             {
               type: 'category',
               axisTick: {show: false},
-              data: ['2012', '2013', '2014', '2015', '2016']
+              data: xAxisData//['2012', '2013', '2014', '2015', '2016']
             }
           ],
-          yAxis: [
+          xAxis: [
             {
-              type: 'value'
+              type: 'value',
+              axisLabel: {
+                formatter: '{value} W'
+              },
             }
           ],
           series: [
             {
-              name: 'Forest',
+              name: 'price1',
+              stack: '广告',
               type: 'bar',
-              barGap: 0,
               label: labelOption,
               emphasis: {
                 focus: 'series'
               },
-              markPoint: {
-                data: [
-                  {name: '年最高', value: 13.2, xAxis: 3, yAxis: 184},
-                  {name: '年最低', value: 2.3, xAxis: 11, yAxis: 3}
-                ]
-              },
-              data: [320, 332, 301, 334, 390]
+              // markPoint: {
+              //   data: price
+              // },
+              data: price1Data
             },
             {
-              name: 'Steppe',
+              name: 'price2',
+              stack: '广告',
               type: 'bar',
               label: labelOption,
               emphasis: {
                 focus: 'series'
               },
-              data: [220, 182, 191, 234, 290]
+              data: price2Data
             },
             {
-              name: 'Desert',
+              name: 'price3',
+              stack: '广告',
               type: 'bar',
               label: labelOption,
               emphasis: {
                 focus: 'series'
               },
-              data: [150, 232, 201, 154, 190]
+              data: price3Data
             },
             {
-              name: 'Wetland',
+              name: 'price4',
+              stack: '广告',
               type: 'bar',
               label: labelOption,
               emphasis: {
                 focus: 'series'
               },
-              data: [98, 77, 101, 99, 40]
+              data: price4Data
             }
           ]
         };
 
-        option && myChart.setOption(option);
+        option && this.chart.setOption(option);
+      },
+      fetchData() {
+        var params = {gzone_id: 1, limit: 10}
+        request({
+          url: serverDomain + 'api/price_trend/search',
+          method: 'get',
+          params
+        }).then(respose => {
+          console.log(respose)
+          this.chartData = respose.data
 
-      }
+        })
+
+      },
+
     }
   }
 </script>

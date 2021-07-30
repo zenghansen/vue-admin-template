@@ -22,6 +22,9 @@ var sqlMap = {
       'count( 1 ) as total\n' +
       'FROM\n' +
       '( SELECT count( 1 ) FROM dnf_buylog WHERE ids_id = ? GROUP BY DATE_FORMAT( create_time, \'%Y-%m-%d\' ) ) a'
+  },
+  priceTread:{
+    search:'SELECT *,DATE_FORMAT(create_time,\'%H:%i\') as  h from (SELECT * from dnf_pricetrend where gzone_id = ?  order by id desc  limit ?) a  order by id '
   }
 }
 module.exports = sqlMap;
