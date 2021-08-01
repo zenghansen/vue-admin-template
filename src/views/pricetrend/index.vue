@@ -1,5 +1,15 @@
 <template>
-  <div id="main" :style="{width: '100%', height: '600px'}"></div>
+  <div class="app-container" >
+    <el-form ref="form" :model="form" label-width="120px">
+      <el-form-item label="Activity zone">
+        <el-select v-model="form.region" placeholder="please select your zone">
+          <el-option  v-for="item in form.options"  :value="item.value" :key="item.value" :label="item.label"> </el-option>
+        </el-select>
+        <el-button type="primary" @click="onSubmit">Create</el-button>
+      </el-form-item>
+    </el-form>
+    <div id="main" :style="{width: '100%', height: '600px'}"></div>
+  </div>
 </template>
 <script>
   import * as echarts from 'echarts';
@@ -10,7 +20,20 @@
     data() {
       return {
         chartData: {},
-        chart: null
+        chart: null,
+        form: {
+          region: 1,
+          options: [{
+            value: 1,
+            label: 'zone 1'
+          }, {
+            value: 2,
+            label: 'zone 2'
+          }, {
+            value: 3,
+            label: 'zone 3'
+          }]
+        }
       }
     },
     mounted() {
@@ -28,8 +51,25 @@
       }
     },
     methods: {
+      onSubmit() {
+        this.fetchData()
+
+      },
+      fetchData() {
+        var params = {gzone_id: this.form.region, limit: 10}
+        request({
+          url: serverDomain + 'api/price_trend/search',
+          method: 'get',
+          params
+        }).then(respose => {
+          console.log(respose)
+          this.chartData = respose.data
+
+        })
+
+      },
       initCharts() {
-        this.chart = echarts.init(this.$el, 'macarons')
+        this.chart = echarts.init(document.getElementById("main"), 'macarons')
       },
       setOptions(chartData) {
 
@@ -209,26 +249,14 @@
               emphasis: {
                 focus: 'series'
               },
-              data: price4Data
+              data: []
             }
           ]
         };
 
         option && this.chart.setOption(option);
       },
-      fetchData() {
-        var params = {gzone_id: 1, limit: 10}
-        request({
-          url: serverDomain + 'api/price_trend/search',
-          method: 'get',
-          params
-        }).then(respose => {
-          console.log(respose)
-          this.chartData = respose.data
 
-        })
-
-      },
 
     }
   }

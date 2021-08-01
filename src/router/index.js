@@ -69,6 +69,12 @@ export const constantRoutes = [
         meta: { title: 'pricetrend', icon: 'table' }
       },
       {
+        path: 'buylog',
+        name: 'buylog',
+        component: () => import('@/views/buylog/index'),
+        meta: { title: 'buylog', icon: 'table' }
+      },
+      {
         path: 'table',
         name: 'Table',
         component: () => import('@/views/table/index'),

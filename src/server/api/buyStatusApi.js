@@ -26,8 +26,8 @@ var jsonWrite = function (res, ret) {
 router.get('/search', (req, res) => {
   var sql = $sql.status.search
   var params = req.query
-  var start = (params.pageNumber - 1) * params.pageSize
-  conn.query(sql, [parseInt(params.uid), parseInt(start), parseInt(params.pageSize)], function (err, result) {
+  var start = (params.page - 1) * params.limit
+  conn.query(sql, [parseInt(params.uid), parseInt(start), parseInt(params.limit)], function (err, result) {
 
     if (err) {
       console.log(err)
@@ -35,7 +35,7 @@ router.get('/search', (req, res) => {
     if (result) {
 
       var data = {}
-      data.row = result
+      data.items = result
 
       //查询条数
       var sql = $sql.status.count
