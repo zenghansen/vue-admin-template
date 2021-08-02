@@ -85,6 +85,9 @@
           }, {
             value: 4,
             label: 'uid 4'
+          }, {
+            value: 5,
+            label: 'uid 5'
           }],
         },
         list: null,
